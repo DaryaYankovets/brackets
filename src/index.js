@@ -1,5 +1,8 @@
 module.exports = function check(str, bracketsConfig) {
-  let arr = [];
+  if (str.length % 2 !== 0) {
+    return false;
+  }
+  
   let stack = [];
   let openBrakets = [];  // ["(","["]
   let closeBrakets = [];  //  [")","]"]
@@ -14,27 +17,32 @@ module.exports = function check(str, bracketsConfig) {
       sameBrakets.push(openBrakets[i]);
     }
   }
-  if (sameBrakets.length === 0) {
-    arr = [...str];
-  } else {
-    for (let i = 0; i < sameBrakets.length; i++) {
-        [...str].forEach(e => {
-          if(e !== sameBrakets[i]) arr.push(e);
-        });
-    }
-  }
-  
-  arr.forEach((elem, index) => {
-    if (openBrakets.findIndex(e => e === elem) !== -1) {
-      stack.push(elem);
+ 
+  [...str].forEach((elem, index) => {
+    if(sameBrakets.findIndex(i => i === elem) === -1) {
+      if (openBrakets.findIndex(e => e === elem) !== -1) {
+        stack.push(elem);
+      } else {
+          const indexCloseBrakets = closeBrakets.findIndex(el => el === elem);
+          const openBraket = openBrakets[indexCloseBrakets];
+
+          if(stack[stack.length - 1] === openBraket) {
+            stack.pop();
+         }
+      }
     } else {
-        const indexCloseBrakets = closeBrakets.findIndex(e => e === elem);
-        const openBraket = openBrakets[indexCloseBrakets];
-      
-        if(stack[stack.length - 1] === openBraket) {
-          stack.pop();
-       }
+      if (stack.findIndex(ind => ind === elem) === -1) {
+        stack.push(elem);
+      } else {
+          const indexCloseBrakets = closeBrakets.findIndex(el => el === elem);
+          const openBraket = openBrakets[indexCloseBrakets];
+
+          if(stack[stack.length - 1] === openBraket) {
+            stack.pop();
+         }
+      }
     }
+    
   });
   
    return stack.length === 0;
